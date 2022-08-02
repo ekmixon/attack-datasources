@@ -27,7 +27,7 @@ yaml_files = glob.glob(path.join(path.dirname(__file__),"../..", "contribution",
 yaml_loaded = [yaml.safe_load(open(yaml_file).read()) for yaml_file in yaml_files]
 
 print("[+] Creating data source objects aggregated yaml file..")
-with open(f'../attack_data_sources_objects.yaml', 'w') as file:
+with open('../attack_data_sources_objects.yaml', 'w') as file:
     yaml.dump(yaml_loaded, file, sort_keys = False)
 
 ###### Creating YAML file with (Sub)Techniques to Data Components Mapping
@@ -51,10 +51,8 @@ attck['data_source'] = attck['data_source'].str.lower()
 attck['data_component'] = attck['data_component'].str.lower()
 
 print("[+] Getting ATT&CK Data Sources to Relationships mapping..")
-yamlFile = open('../attack_data_sources_objects.yaml', 'r') # Accessing yaml file
-dict = yaml.safe_load(yamlFile) # Loading names of data sources into a dictionary object
-yamlFile.close() # Closing yaml file
-
+with open('../attack_data_sources_objects.yaml', 'r') as yamlFile:
+    dict = yaml.safe_load(yamlFile) # Loading names of data sources into a dictionary object
 attck_mapping = pd.DataFrame(dict)
 attck_mapping = attck_mapping[['name','definition','collection_layers','platforms','contributors','data_components','references']].rename(columns={'platforms':'data_source_platform'})
 attck_mapping = attck_mapping.explode('data_components').reset_index(drop = True)

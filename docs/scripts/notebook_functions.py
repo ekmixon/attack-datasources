@@ -65,15 +65,10 @@ def get_attack_dataframe (matrix = 'enterprise'):
 
 # Function to import a yaml file as a pandas dataframe
 def import_yaml(path):
-    # Accessing yaml file
-    yamlFile = open(path, 'r')
-    # Loading names of data sources into a dictionary object
-    dict = yaml.safe_load(yamlFile)
-    # Closing yaml file
-    yamlFile.close()
-    # Creating Pandas dataframe
-    df = pd.DataFrame(dict)
-    return df
+    with open(path, 'r') as yamlFile:
+        # Loading names of data sources into a dictionary object
+        dict = yaml.safe_load(yamlFile)
+    return pd.DataFrame(dict)
 
 ###### Defining Functions - Visualizations
 
@@ -100,12 +95,12 @@ def bar_chart(data, title, orientation = 'v'):
 def barh_chart(dataframe,xfield,yfield,title,xlabel = '',ylabel = '',figSize = (12,8)):
     ## Code Reference: https://stackoverflow.com/questions/28931224/adding-value-labels-on-a-matplotlib-bar-chart
     # Bring some raw data.
-    if isinstance(dataframe,pd.DataFrame) == True:
+    if isinstance(dataframe,pd.DataFrame):
         frequencies = dataframe[xfield].values[::-1].tolist()
         max_freq = dataframe[xfield].values.max()
         min_freq = dataframe[xfield].values.min()
         y_labels = dataframe[yfield].values[::-1].tolist()
-    elif isinstance(dataframe, DataFrame) == True:
+    elif isinstance(dataframe, DataFrame):
         frequencies = dataframe.toPandas()[xfield].values[::-1].tolist()
         max_freq = dataframe.toPandas()[xfield].values.max()
         min_freq = dataframe.toPandas()[xfield].values.min()
@@ -222,9 +217,7 @@ def network_graph_bokeh(dataframe):
     # Adding nodes labels
     x,y = zip(*graph_renderer.layout_provider.graph_layout.values())
 
-    names = []
-    for i in nx.nodes(G): names.append(i) 
-        
+    names = list(nx.nodes(G))
     nodes_table = ColumnDataSource({'x': x, 'y': y,'name': names})
     labels = LabelSet(x='x',y='y',text='name',render_mode='canvas',y_offset=-30,text_align='center',
                     text_font_size='15px',source = nodes_table, background_fill_color=None,text_color = 'black')
